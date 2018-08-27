@@ -17,6 +17,6 @@ In the PyImageSearch example code, Non Maximal Suppression (NMS) is performed on
 
 Initially, I modified the code to rotate the rectangles returned by NMS and then drawing them on the original image.
 
-![]()
+![Unrotated](images/out/lebron_james_unrotated.jpg)
 
 
