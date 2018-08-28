@@ -127,4 +127,10 @@ for i, function in enumerate(functions):
     cv2.imshow(title,drawOn)
     cv2.moveWindow(title, 150+i*300, 150)
 
+
+    import os
+    filename = os.path.basename(args['image'])
+    print(filename)
+    cv2.imwrite("images/out/{}".format(filename),drawOn)
+
 cv2.waitKey(0)
