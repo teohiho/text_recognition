@@ -88,14 +88,13 @@ for i, function in enumerate(functions):
     indicies = np.array(indicies).reshape(-1)
 
     drawrects = np.array(rects)[indicies]
-    #confidences = np.array(confidences)[indicies]
 
     print("[INFO] {} NMS took {:.6f} seconds and found {} boxes".format(names[i], end - start, len(drawrects)))
 
     drawOn = orig.copy()
     drawBoxes(drawOn, drawrects, ratioWidth, ratioHeight, (0, 255, 0), 2)
 
-    title = "nmx_boxes {}".format(names[i])
+    title = "nms_boxes {}".format(names[i])
     cv2.imshow(title,drawOn)
     cv2.moveWindow(title, 150+i*300, 150)
 
@@ -116,21 +115,14 @@ for i, function in enumerate(functions):
     indicies = np.array(indicies).reshape(-1)
 
     drawpolys = np.array(polygons)[indicies]
-    #confidences = np.array(confidences)[indicies]
 
     print("[INFO] {} NMS took {:.6f} seconds and found {} boxes".format(names[i], end - start, len(drawpolys)))
 
     drawOn = orig.copy()
     drawPolygons(drawOn, drawpolys, ratioWidth, ratioHeight, (0, 255, 0), 2)
 
-    title = "nmx_boxes {}".format(names[i])
+    title = "nms_polygons {}".format(names[i])
     cv2.imshow(title,drawOn)
     cv2.moveWindow(title, 150+i*300, 150)
-
-
-    import os
-    filename = os.path.basename(args['image'])
-    print(filename)
-    cv2.imwrite("images/out/{}".format(filename),drawOn)
 
 cv2.waitKey(0)
