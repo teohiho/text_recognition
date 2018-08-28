@@ -92,21 +92,22 @@ Each of the above functions has an optional named parameter *nms\_function* and 
  indicies = nms_polygons(polygons, scores, nms_function=fast, nms_threshold=0.45, eta=0.9, score_threshold=0.6, top_k=100)
  ```
  
- ## Results
+## Results
  
- As you might expect, performing NMS on the rotated rectangles doesn't really change much on images with sparse text like the Lebron images above.  However, with busier images there can be a difference.  Using the Malisiewicz NMS algorithm:
+ As you might expect, performing NMS on the rotated rectangles doesn't really change much on images with sparse text like the Lebron images above.  However, with busier images there can be a difference -- EAST doesn't perform well with the image below, but it's instrumental for examining the NMS results.
  
 
-Unrotated|Rotated
----|---
+|Unrotated|Rotated|
+|:---:|:---:|
 |![Unrotated](images/out/license_mali_unrot.jpg)|![Rotated](images/out/license_mali_rot.jpg)|
-15 Rectangles|11 Rectangles
+|Malisiewicz (above) 15 Rectangles|11 Rectangles|
+|Felzenswalb 10 Rectangles |9 Rectangles|
+|Fast 10 Rectangles| 9 Rectangles|
 
-Similary, the Felzenswalb and Fast algorithms returned 10 rectangles on the unrotated rectangles and 9 rectangles on the rotated.
 
 ## Run the Code
 
-The code was developed and run on Python 3.7 and OpenCV 4.0.0-pre on OSX.  You can find helpful instructions for setting up this environment on [yet another PyImageSearch blog post](https://www.pyimagesearch.com/2018/08/17/install-opencv-4-on-macos/)
+This code was developed and run on Python 3.7 and OpenCV 4.0.0-pre on OSX.  You can find helpful instructions for setting up this environment on [yet another PyImageSearch blog post](https://www.pyimagesearch.com/2018/08/17/install-opencv-4-on-macos/)
 
 Clone the repo and run:
 
@@ -114,8 +115,10 @@ Clone the repo and run:
 python text_detection.py --east frozen_east_text_detection.pb --image images/lebron_james.jpg
 ``` 
 
+I have not implemented *text\_detection\_video.py*
+
 ## Thanks
-A big thanks to Adrian Rosebrock ([@PyImageSearch](https://twitter.com/@PyImageSearch)) at [PyImageSearch](https://www.pyimagesearch.com) -- he writes some great stuff!
+A big thanks to Adrian Rosebrock ([@PyImageSearch](https://twitter.com/@PyImageSearch)) at [PyImageSearch](https://www.pyimagesearch.com) -- he writes some amazing and inspiring content.
 
 
 
