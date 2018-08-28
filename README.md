@@ -115,7 +115,11 @@ Clone the repo and run:
 python text_detection.py --east frozen_east_text_detection.pb --image images/lebron_james.jpg
 ``` 
 
+## What's Next?
+
 I have not implemented *text\_detection\_video.py*
+
+There are not any tests.
 
 ## Thanks
 A big thanks to Adrian Rosebrock ([@PyImageSearch](https://twitter.com/@PyImageSearch)) at [PyImageSearch](https://www.pyimagesearch.com) -- he writes some amazing and inspiring content.
