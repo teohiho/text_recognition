@@ -1,10 +1,10 @@
-# OpenCV-text-detection
+# opencv-text-detection
 
 This is a derivative of [pyimagesearch.com OpenCV-text-detection](https://www.pyimagesearch.com/2018/08/20/OpenCV-text-detection-east-text-detector/) and the [OpenCV text detection c++ example](https://docs.OpenCV.org/master/db/da4/samples_2dnn_2text_detection_8cpp-example.html)
 
 This code began as an attempt to rotate the rectangles found by EAST.  The pyimagesearch code doesn't rotate the rectangles due to a limitation in the OpenCV Python bindings -- specifically, there isn't a NMSBoxes call for rotated rectangles (this turns out to be a bigger problem)
 
-[EAST](https://arxiv.org/abs/1704.03155) Efficient and Accurate Scene Text detection pipeline.  Adrian's post does a great job explaining EAST.  In summary, EAST detects text in an image (or video) and provides geometry and confidence scores for each block of text it detects.  Its worth noting that:
+[EAST](https://arxiv.org/abs/1704.03155) is an Efficient and Accurate Scene Text detection pipeline.  Adrian's post does a great job explaining EAST.  In summary, EAST detects text in an image (or video) and provides geometry and confidence scores for each block of text it detects.  Its worth noting that:
 
 * The geometry of the rectangles is given as offsetX, offsetY, top, right, bottom, left, theta.  
 * Top is the distance from the offset point to the top of the rectangle, right is the distance from the offset point to the right edge of the rectangle and so on.  The offset point is most likey **not** the center of the rectangle. 
@@ -15,16 +15,16 @@ While the EAST paper is pretty clear about determining the positioning and size 
 ## Modifications
 In the PyImageSearch example code, Non Maximal Suppression (NMS) is performed on the results provided by EAST on the unrotated rectangles.  The unrotated rectangles returned by NMS are then drawn on the original image.
 
-Initially, I modified the code to rotate the rectangles returned by NMS and then drawing them on the original image.
+Initially, I modified the code to rotate the rectangles selected by NMS and then drawing them on the original image.  As an example, the images below show the unrotated and rotated rectangles.
 
 |Unrotated|Rotated|
 |:---:|:---:|
 |![Unrotated](images/out/lebron_james_unrot.jpg) | ![Rotated](images/out/lebron_james_rot.jpg)|
 
-## Challenge
+## The Challenge
 With my assumption that each rectangle returned by EAST was to be rotated around its offset, I wanted to see how the individual rotations would impact the results of NMS.  That is, rather than applying NMS to the EAST rectangles and then drawing them rotated, could I rotate the rectangles and then run them through NMS?  This became a challenge as the PyImageSearch imutils and OpenCV Python bindings don't support NMS applied to rectangles rotated about an arbitrary point.
 
-The code in this repo is a result of that challenge.  I settled on nms.py that has three functions:
+The code in this repo is a result of that challenge.  ```nms.py``` has three functions for performing NMS:
 
 
 * **nms\_rboxes(rotated_rects, scores)**
@@ -33,9 +33,9 @@ The code in this repo is a result of that challenge.  I settled on nms.py that h
 	
 	*scores* is the corresponding list of confidence scores for the rrects.  
 
-	This function converts the list of rotated rectangles into a list of polygons (contours) described by its verticies and passed to nms\_polygons.
+	This function converts the list of rotated rectangles into a list of polygons (contours) described by its verticies and passes this list along with other received parameters to *nms\_polygons*.
 	
-	REturns a list of indicies of the highest scoring, non-overlapping *rotated\_rects*.
+	Returns a list of indicies of the highest scoring, non-overlapping *rotated\_rects*.
 	
 * **nms\_polygons(polys, scores)**
 
@@ -64,7 +64,7 @@ Each of the above functions has an optional named parameter *nms\_function* and 
  indicies = nms_polygons(polygons, scores, nms_function=felzenswalb)
  ```
 
- The *malisiewicz* implementation was transmogrified from [this PyImageSearch blog post](https://www.pyimagesearch.com/2015/02/16/faster-non-maximum-suppression-python/).  Per Adrian's post, this implementation is *much* faster than felzenswalb but be aware that when running nms_rrects or nms_polygons, some of the vectorization is lost :( and performance suffers a bit. 
+ The *malisiewicz* implementation was transmogrified from [this PyImageSearch blog post](https://www.pyimagesearch.com/2015/02/16/faster-non-maximum-suppression-python/).  Per Adrian's post, this implementation is *much* faster than felzenswalb but be aware that when running nms\_rrects or nms\_polygons, some of the vectorization is lost :( and performance suffers a bit. 
  
  ```python
  indicies = nms_polygons(polygons, scores, nms_function=malisiewicz)
