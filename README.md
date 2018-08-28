@@ -17,9 +17,9 @@ In the PyImageSearch example code, Non Maximal Suppression (NMS) is performed on
 
 Initially, I modified the code to rotate the rectangles returned by NMS and then drawing them on the original image.
 
-Unrotated|Rotated
----|---
-|![Unrotated](images/out/lebron_james_unrot.jpg)|![Rotated](images/out/lebron_james_rot.jpg)|
+|Unrotated|Rotated|
+|---|---|
+|![Unrotated](images/out/lebron_james_unrot.jpg) | ![Rotated](images/out/lebron_james_rot.jpg)|
 
 ## Challenge
 With my assumption that each rectangle returned by EAST was to be rotated around its offset, I wanted to see how the individual rotations would impact the results of NMS.  That is, rather than applying NMS to the EAST rectangles and then drawing them rotated, could I rotate the rectangles and then run them through NMS?  This became a challenge as the PyImageSearch imutils and OpenCV Python bindings don't support NMS applied to rectangles rotated about an arbitrary point.
@@ -100,9 +100,9 @@ Each of the above functions has an optional named parameter *nms\_function* and 
 |Unrotated|Rotated|
 |:---:|:---:|
 |![Unrotated](images/out/license_mali_unrot.jpg)|![Rotated](images/out/license_mali_rot.jpg)|
-|Malisiewicz (above) 15 Rectangles|11 Rectangles|
-|Felzenswalb 10 Rectangles |9 Rectangles|
-|Fast 10 Rectangles| 9 Rectangles|
+|Malisiewicz (above) 15 Rectangles | 11 Rectangles|
+|Felzenswalb 10 Rectangles | 9 Rectangles|
+|Fast 10 Rectangles | 9 Rectangles|
 
 
 ## Run the Code
