@@ -9,8 +9,9 @@ import cv2
 
 from decode import decode
 from draw import drawPolygons, drawBoxes
-import nms
-import nms_helpers as help
+import utils
+
+from nms import nms as nms
 
 
 # construct the argument parser and parse the arguments
@@ -73,9 +74,16 @@ nmsThreshold = 0.4
 # decode the blob info
 (rects, confidences, baggage) = decode(scores, geometry, confidenceThreshold)
 
+offsets = []
+thetas = []
+for b in baggage:
+    offsets.append(b['offset'])
+    thetas.append(b['angle'])
+
 ##########################################################
 
 functions = nms.nms_functions
+
 names = ["Felz", "Fast", "Mali"]
 
 for i, function in enumerate(functions):
@@ -102,7 +110,7 @@ cv2.waitKey(0)
 
 
 # convert rects to polys
-polygons = help.rects2polys(rects, baggage, ratioWidth, ratioHeight)
+polygons = utils.rects2polys(rects, thetas, offsets, ratioWidth, ratioHeight)
 
 
 for i, function in enumerate(functions):
