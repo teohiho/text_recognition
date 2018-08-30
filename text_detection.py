@@ -11,7 +11,7 @@ from decode import decode
 from draw import drawPolygons, drawBoxes
 import utils
 
-from nms import nms as nms
+from nms import nms
 
 
 # construct the argument parser and parse the arguments
@@ -82,9 +82,11 @@ for b in baggage:
 
 ##########################################################
 
-functions = nms.nms_functions
+functions = [nms.felzenswalb, nms.fast, nms.malisiewicz]
 
-names = ["Felz", "Fast", "Mali"]
+names = ["Felzenswalb", "Fast", "Malisiewicz"]
+
+print("[INFO] Running nms_boxes . . .")
 
 for i, function in enumerate(functions):
 
@@ -112,6 +114,7 @@ cv2.waitKey(0)
 # convert rects to polys
 polygons = utils.rects2polys(rects, thetas, offsets, ratioWidth, ratioHeight)
 
+print("[INFO] Running nms_polygons . . .")
 
 for i, function in enumerate(functions):
 
