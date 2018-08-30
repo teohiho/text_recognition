@@ -24,6 +24,8 @@ Initially, I modified the code to rotate the rectangles selected by NMS and then
 ## The Challenge
 With my assumption that each rectangle returned by EAST was to be rotated around its offset, I wanted to see how the individual rotations would impact the results of NMS.  That is, rather than applying NMS to the EAST rectangles and then drawing them rotated, could I rotate the rectangles and then run them through NMS?  This became a challenge as the PyImageSearch imutils and OpenCV Python bindings don't support NMS applied to rectangles rotated about an arbitrary point.
 
+###UPDATE: nms.py and all of the NMS code mentioned below has been moved into a PyPi package "nms"
+
 The code in this repo is a result of that challenge.  ```nms.py``` has three functions for performing NMS:
 
 
