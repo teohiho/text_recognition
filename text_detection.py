@@ -86,12 +86,12 @@ functions = [nms.felzenswalb, nms.fast, nms.malisiewicz]
 
 names = ["Felzenswalb", "Fast", "Malisiewicz"]
 
-print("[INFO] Running nms_boxes . . .")
+print("[INFO] Running nms.boxes . . .")
 
 for i, function in enumerate(functions):
 
     start = time.time()
-    indicies = nms.nms_boxes(rects, confidences, nms_function=function, confidence_threshold=confidenceThreshold,
+    indicies = nms.boxes(rects, confidences, nms_function=function, confidence_threshold=confidenceThreshold,
                              nsm_threshold=nmsThreshold)
     end = time.time()
 
@@ -104,7 +104,7 @@ for i, function in enumerate(functions):
     drawOn = orig.copy()
     drawBoxes(drawOn, drawrects, ratioWidth, ratioHeight, (0, 255, 0), 2)
 
-    title = "nms_boxes {}".format(names[i])
+    title = "nms.boxes {}".format(names[i])
     cv2.imshow(title,drawOn)
     cv2.moveWindow(title, 150+i*300, 150)
 
@@ -114,12 +114,12 @@ cv2.waitKey(0)
 # convert rects to polys
 polygons = utils.rects2polys(rects, thetas, offsets, ratioWidth, ratioHeight)
 
-print("[INFO] Running nms_polygons . . .")
+print("[INFO] Running nms.polygons . . .")
 
 for i, function in enumerate(functions):
 
     start = time.time()
-    indicies = nms.nms_polygons(polygons, confidences, nms_function=function, confidence_threshold=confidenceThreshold,
+    indicies = nms.polygons(polygons, confidences, nms_function=function, confidence_threshold=confidenceThreshold,
                              nsm_threshold=nmsThreshold)
     end = time.time()
 
@@ -132,7 +132,7 @@ for i, function in enumerate(functions):
     drawOn = orig.copy()
     drawPolygons(drawOn, drawpolys, ratioWidth, ratioHeight, (0, 255, 0), 2)
 
-    title = "nms_polygons {}".format(names[i])
+    title = "nms.polygons {}".format(names[i])
     cv2.imshow(title,drawOn)
     cv2.moveWindow(title, 150+i*300, 150)
 
