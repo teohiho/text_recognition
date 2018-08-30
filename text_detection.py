@@ -82,9 +82,7 @@ for b in baggage:
 
 ##########################################################
 
-functions = [nms.felzenswalb, nms.fast, nms.malisiewicz]
-
-names = ["Felzenswalb", "Fast", "Malisiewicz"]
+functions = [nms.felzenszwalb.nms, nms.fast.nms, nms.malisiewicz.nms]
 
 print("[INFO] Running nms.boxes . . .")
 
@@ -99,12 +97,13 @@ for i, function in enumerate(functions):
 
     drawrects = np.array(rects)[indicies]
 
-    print("[INFO] {} NMS took {:.6f} seconds and found {} boxes".format(names[i], end - start, len(drawrects)))
+    name = function.__module__.split('.')[-1].title()
+    print("[INFO] {} NMS took {:.6f} seconds and found {} boxes".format(name, end - start, len(drawrects)))
 
     drawOn = orig.copy()
     drawBoxes(drawOn, drawrects, ratioWidth, ratioHeight, (0, 255, 0), 2)
 
-    title = "nms.boxes {}".format(names[i])
+    title = "nms.boxes {}".format(name)
     cv2.imshow(title,drawOn)
     cv2.moveWindow(title, 150+i*300, 150)
 
@@ -127,12 +126,14 @@ for i, function in enumerate(functions):
 
     drawpolys = np.array(polygons)[indicies]
 
-    print("[INFO] {} NMS took {:.6f} seconds and found {} boxes".format(names[i], end - start, len(drawpolys)))
+    name = function.__module__.split('.')[-1].title()
+
+    print("[INFO] {} NMS took {:.6f} seconds and found {} boxes".format(name, end - start, len(drawpolys)))
 
     drawOn = orig.copy()
     drawPolygons(drawOn, drawpolys, ratioWidth, ratioHeight, (0, 255, 0), 2)
 
-    title = "nms.polygons {}".format(names[i])
+    title = "nms.polygons {}".format(name)
     cv2.imshow(title,drawOn)
     cv2.moveWindow(title, 150+i*300, 150)
 
