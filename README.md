@@ -109,6 +109,17 @@ Each of the above functions has an optional named parameter *nms\_function* and 
 
 This code was developed and run on Python 3.7 and OpenCV 4.0.0-pre on OSX.  You can find helpful instructions for setting up this environment on [yet another PyImageSearch blog post](https://www.pyimagesearch.com/2018/08/17/install-opencv-4-on-macos/)
 
+Update: I've separated out all of the NMS specific code for easy re-use into a pypi package nms 
+([PyPi](https://pypi.org/project/nms/) |
+[bitbucket](https://bitbucket.org/tomhoag/nms/) | 
+[rtd](https://nms.readthedocs.io))
+
+You will also need numpy and nms:
+
+```python
+pip install -r requirements.txt
+```
+
 Clone the repo and run:
 
 ```python
