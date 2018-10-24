@@ -125,7 +125,7 @@ pip install git+https://bitbucket.org/tomhoag/opencv-text-detection.git
 Run the command:
 
 ```python
-text_detection --image images/lebron_james.jpg
+open-text-detection --image images/lebron_james.jpg
 ```
 
 ## What's Next?
