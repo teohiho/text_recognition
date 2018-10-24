@@ -12,6 +12,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://bitbucket.org/tomhoag/opencv-text-detection",
     packages=setuptools.find_packages(),
+    include_package_data=True,
     install_requires=[
         'nms>=0.1.5',
         'numpy==1.15.0',

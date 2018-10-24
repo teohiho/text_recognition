@@ -1,5 +1,5 @@
 # USAGE
-# text_detection --image images/lebron_james.jpg --east frozen_east_text_detection.pb
+# opencv-text-detection --image images/lebron_james.jpg
 
 # import the necessary packages
 import argparse
