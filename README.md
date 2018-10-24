@@ -119,13 +119,13 @@ Update: I've separated out all of the NMS specific code for easy re-use into a p
 Install this package and its dependencies:
 
 ```python
-pip install git+git://bitbucket.org:tomhoag/opencv-text-detection.git#egg=opencv_text_detection
+pip install git+https://bitbucket.org/tomhoag/opencv-text-detection.git
 ```
 
 Run the command:
 
 ```python
-text_detection --east frozen_east_text_detection.pb --image images/lebron_james.jpg
+text_detection --image images/lebron_james.jpg
 ```
 
 ## What's Next?

@@ -3,6 +3,7 @@
 
 # import the necessary packages
 import argparse
+import os
 import time
 
 import cv2
@@ -132,7 +133,7 @@ def text_detection_command():
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--image", type=str,
         help="path to input image")
-    ap.add_argument("-east", "--east", type=str,
+    ap.add_argument("-east", "--east", type=str, default=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'frozen_east_text_detection.pb'),
         help="path to input EAST text detector")
     ap.add_argument("-c", "--min-confidence", type=float, default=0.5,
         help="minimum probability required to inspect a region")
