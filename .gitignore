@@ -4,3 +4,4 @@ __pycache__/
 images/output/
 ve/
 frozen_east_text_detection.pb
+handwrite_model_EMNIST_From_Binary
