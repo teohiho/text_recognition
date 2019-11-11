@@ -9,8 +9,11 @@ from skimage import io  # pip install scikit-image
 import cv2
 from PIL import Image
 
-TRAIN_ITEMS = 112799
-TEST_ITEMS = 18799
+# TRAIN_ITEMS = 112799
+# TEST_ITEMS = 18799
+
+TRAIN_ITEMS = 1300
+TEST_ITEMS = 1300
 
 # train-images-idx3-ubyte: đào tạo tập hình ảnh
 # đào tạo-nhãn-idx1-ubyte: nhãn tập huấn luyện
@@ -116,7 +119,7 @@ def train_model():
 
     # test
     print("Bắt đầu test!")
-    pickle.dump(classifier, open("handwrite_model_EMNIST", 'wb'))
+    pickle.dump(classifier, open("handwrite_model_TuTrain", 'wb'))
 
     #cho ra các label của test gọp lại thành mảng
     predictions = classifier.predict(test_data[0])
@@ -212,7 +215,7 @@ def image_color_to_gray_size(imageSimple):
     # print("<<<<<logo:" + str(logo))
     if type(img) is str:
         logo = io.imread(img, as_grey=True)
-    classifier = pickle.load(open("handwrite_model_EMNIST_From_Binary", 'rb'))
+    classifier = pickle.load(open("handwrite_model_TuTrain", 'rb'))
     
 
     # logo = logo.reshape((logo.shape[0]*3, 28, 28))
@@ -221,29 +224,36 @@ def image_color_to_gray_size(imageSimple):
     
     
     logo_train = (logo).reshape(1, -1)
-    print(">>>logo_train:" + str(logo_train.shape[:2]))
-    print("logo_train:", logo_train)
+    # print(">>>logo_train:" + str(logo_train.shape[:2]))
+    # print("logo_train:", logo_train)
     total_pixel = 28*28
     logo_train_chia = [[0 for _ in range(total_pixel)]]
     
     for i in range(total_pixel):
         logo_train_chia[0][i] = logo_train[0][i] / 256
-    print("logo_train_chia:", logo_train_chia)
+    # print("logo_train_chia:", logo_train_chia)
     show_image(logo)
     result = classifier.predict(logo_train_chia)
     print("The predicted letter is :")
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
     
     print(alphabet[result[0]- 1])
+
+
+    #!/usr/bin/python
+    # Open a file
+    writeListToTextFile(alphabet[result[0]- 1],'result.txt', 'a')
+
+
     cv2.waitKey(0)
 
-def binarize_image(img_path, threshold):
+def binarize_image(imageSimple, threshold):
     """Binarize an image."""
     # image_file = Image.open(imageSimple)
     image_file = Image.fromarray(imageSimple)
     image = image_file.convert('L')  # convert image to monochrome
     image = np.array(image)
-    print("#### image:" + str(image))
+    # print("#### image:" + str(image))
     image = binarize_array(image, threshold)
     return image
 
@@ -260,6 +270,16 @@ def binarize_array(numpy_array, threshold=200):
     # print(">>>numpy_array:" + str(img.shape[:2]))
     return numpy_array
 
+
+
+
+
+def writeListToTextFile(list, filePath, mode='a'):
+    ''' Write list to csv line by line '''
+    with open(filePath, mode, encoding="utf8") as myfile:
+        for item in list:
+            # myfile.write(str(item) +  '\n')
+            myfile.write(str(item) )
 
 
 

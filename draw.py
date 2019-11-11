@@ -86,7 +86,7 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         # filename1 = './images/croped/croped-' + str(polygon[0][1]) + str(polygon[1][1])  + '.jpg' 
         # cv2.imwrite(filename1, img_crop)
     
-        # cv2.imshow("img_crop", img_crop)
+        cv2.imshow("img_crop", img_crop)
         simple(img_crop)
 
 
@@ -218,4 +218,3 @@ def drawBoxes(drawOn, boxes, ratioWidth, ratioHeight, color=(0, 255, 0), width=1
 #     img = image_smoothening(img)
 #     or_image = cv2.bitwise_or(img, closing)
 #     return or_image
-

@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 from text_recognition import image_color_to_gray_size
+from imutils import contours
 
 
 
@@ -22,14 +23,16 @@ def simple(img):
     # Nếu giá trị pixel lớn hơn giá trị ngưỡng, nó được gán một giá trị (có thể là màu trắng), nếu không, nó được gán giá trị khác (có thể là màu đen)
     # ret2, th2 = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     # ret2, th2 = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
+    
     ret2, th2 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
+    
     # cv2.imshow('th2', th2)
 
     #--- perform morphological operation to ensure smaller portions are part of a single character ---
     # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html
     # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    # threshed = cv2.morphologyEx(th2, cv2.MORPH_CLOSE, kernel)
+    threshed = cv2.morphologyEx(th2, cv2.MORPH_CLOSE, kernel)
     threshed = cv2.dilate(th2, kernel, iterations=2)
 
     #--- find contours ---
@@ -38,6 +41,8 @@ def simple(img):
     # Nếu bạn vượt qua cv.CHAIN_APPROX_NONE, tất cả các điểm biên được lưu trữ. Nhưng thực sự chúng ta cần tất cả các điểm? Ví dụ, bạn đã tìm thấy đường viền của một đường thẳng. Bạn có cần tất cả các điểm trên dòng để đại diện cho dòng đó? Không, chúng tôi chỉ cần hai điểm cuối của dòng đó. Đây là những gì cv.CHAIN_APPROX_SIMPLE làm. Nó loại bỏ tất cả các điểm dư thừa và nén đường viền, do đó tiết kiệm bộ nhớ.
     # cv.CHAIN_APPROX_NONE (734 điểm) và hình ảnh thứ hai hiển thị điểm có cv.CHAIN_APPROX_SIMPLE (chỉ 4 điểm).
     Contours, Hierarchy = cv2.findContours(threshed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    print("Sắp xếp")
+    Contours = contours.sort_contours(Contours, method="left-to-right")[0]
     # cv2.drawContours(img, Contours, -1, (0,255,0), 3)
     for contour in Contours:
 
@@ -51,10 +56,10 @@ def simple(img):
         img_crop_simple = img[Y : Y + H, X : X + W]
 
         #--- draw those bounding boxes in the actual image as well as the plain blank image ---
-        # cv2.rectangle(img, (X, Y), (X + W, Y + H), (0,0,255), 2)
+        cv2.rectangle(img, (X, Y), (X + W, Y + H), (0,0,255), 2)
         # cv2.rectangle(black, (X, Y), (X + W, Y + H), (0,255,0), 2)
 
-        # filename = './images/croped/savedSimpleImg-' + str((X+W+Y+H)) + '.jpg'
+        # filename = './images/croped/A-savedSimpleImg-' + str((X+W+Y+H)) + '.png'
         # cv2.imwrite(filename, img_crop_simple)
         # cv2.imshow('img_crop_simple', img_crop_simple)
         
@@ -62,7 +67,7 @@ def simple(img):
         
         cv2.waitKey(0)
 
-    # cv2.imshow('contour', img)
+    cv2.imshow('contour', img)
     # cv2.imshow('black', black)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
