@@ -19,7 +19,7 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         #### draw the polygon
         # img = cv2.polylines(drawOn, [pts], True, color, width)
         ####
-        # cv2.imshow("pts", pts)
+        # cv2.imshow("img", img)
         # config = ("-l eng --oem 1 --psm 7")
         # text = pytesseract.image_to_string(pts, config=config)
 
@@ -208,6 +208,8 @@ def drawBoxes(drawOn, boxes, ratioWidth, ratioHeight, color=(0, 255, 0), width=1
 
         # draw the bounding box on the image
         cv2.rectangle(drawOn, (startX, startY), (endX, endY), color, width)
+        # cv2.imshow("title",drawOn)
+        # cv2.waitKey(0)
 
 
 # def remove_noise_and_smooth(img):

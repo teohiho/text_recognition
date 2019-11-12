@@ -86,7 +86,10 @@ def text_detection(image, east, min_confidence, width, height):
         indicies = np.array(indicies).reshape(-1)
 
         drawrects = np.array(rects)[indicies]
-        
+        # Sắp xếp
+        drawrects = list(drawrects.copy())
+        drawrects.sort(key = lambda x: get_contour_precedence(x, image.shape[1]) )
+
 
         name = function.__module__.split('.')[-1].title()
         print("[INFO] {} NMS took {:.6f} seconds and found {} boxes".format(name, end - start, len(drawrects)))
@@ -117,6 +120,10 @@ def text_detection(image, east, min_confidence, width, height):
 
         drawpolys = np.array(polygons)[indicies]
         # print("drawpolys: " + str(len(drawpolys))) #3
+        # Sắp xếp
+        drawpolys = list(drawpolys.copy())
+        drawpolys.sort(key = lambda x: get_contour_precedence_poly(x, image.shape[1]) )
+
 
         name = function.__module__.split('.')[-1].title()
 
@@ -138,6 +145,13 @@ def text_detection(image, east, min_confidence, width, height):
         cv2.waitKey(0)
     cv2.waitKey(0)
 
+
+def get_contour_precedence(origin, cols):
+    return origin[1] * cols // 12 + origin[0]
+
+def get_contour_precedence_poly(origin, cols):
+    origin = np.mean(origin, axis= 0)
+    return origin[1] * cols // 12 + origin[0]
 
 # def text_detection_command():
 #     # construct the argument parser and parse the arguments
