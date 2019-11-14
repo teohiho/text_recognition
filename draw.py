@@ -36,13 +36,13 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         # ===========================
         # Given 4 points, how to crop a quadrilateral from an image in pytorch/torchvision?
         # polygon[0][0] = polygon[0][0] - 2
-        polygon[0][1] = polygon[0][1] - 10
+        # polygon[0][1] = polygon[0][1] - 10
         # polygon[1][0] = polygon[1][0] + 5
-        polygon[1][1] = polygon[1][1] - 10
+        # polygon[1][1] = polygon[1][1] - 10
         # polygon[2][0] = polygon[2][0] + 5
-        polygon[2][1] = polygon[2][1] + 10
+        # polygon[2][1] = polygon[2][1] + 10
         # polygon[3][0] = polygon[3][0] - 2
-        polygon[3][1] = polygon[3][1] + 10
+        # polygon[3][1] = polygon[3][1] + 10
         # pts = np.array([[polygon[0][0] - 5, polygon[0][1] - 5], [polygon[1][0] + 5, polygon[1][1] - 5], [polygon[2][0] + 5, polygon[2][1] + 5], [polygon[3][0] - 5, polygon[3][1] + 5]], dtype=np.int32)
         pts = np.array([[polygon[0][0] , polygon[0][1] ], [polygon[1][0] , polygon[1][1]], [polygon[2][0] , polygon[2][1]], [polygon[3][0] , polygon[3][1]]], dtype=np.int32)
         mask = np.zeros((drawOn.shape[0], drawOn.shape[1]))
@@ -86,7 +86,7 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         # filename1 = './images/croped/croped-' + str(polygon[0][1]) + str(polygon[1][1])  + '.jpg' 
         # cv2.imwrite(filename1, img_crop)
     
-        cv2.imshow("img_crop", img_crop)
+        cv2.imshow("rotated", rotated)
         simple(img_crop)
 
 

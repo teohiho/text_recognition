@@ -12,8 +12,8 @@ import cv2
 import imutils
 
 
-
 def scan(image):
+	point = 4
 	# construct the argument parser and parse the arguments
 
 	# load the image and compute the ratio of the old height
@@ -40,15 +40,19 @@ def scan(image):
 	# find the contours in the edged image, keeping only the
 	# largest ones, and initialize the screen contour
 	cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	
 	cnts = imutils.grab_contours(cnts)
 	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
-
+	
 	# loop over the contours
 	for c in cnts:
+		
 		# approximate the contour
 		peri = cv2.arcLength(c, True) # chu vi	
 		
+		
 		approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+		print(">>> approx: " + str(len(approx)))
 		# print("approx" + str([approx]))
 
 		# print("[approx][1]: " + str(approx[1][0][1]))
@@ -59,26 +63,43 @@ def scan(image):
 			screenCnt = approx
 			break
 		else:
-			# Select ROI
-			r = cv2.selectROI(image)
-			# Crop image
-			# im_crop = image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
-			# cv2.imshow("Outline", image)
+			imDraw = drawROI(orig)
+			image = imDraw
+			orig = image.copy()
 			
-			fourpoint = [
-				[[int(r[0]) , int(r[1]+r[3])]],
-				[[int(r[0]+r[2]) ,int(r[1]+r[3])]],
-				[[int(r[0]+r[2]) , int(r[1])]],
-				[[int(r[0]) , int(r[1])]],
-			]
-			screenCnt = np.array(fourpoint, np.int32)
-			# print("screenCnt" + str(screenCnt))
-			# Display cropped image
-			# print("im_crop: " + str(im_crop))
-			# cv2.imshow("Image", im_crop)
+			ratio = image.shape[0] / 500.0
+			
+			image = imutils.resize(image, height = 500)
+			
+			gray = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+			gray = cv2.GaussianBlur(gray, (5, 5), 0)
+			
+			edged1 = cv2.Canny(gray, 75, 200)
+			
+			cnts1 = cv2.findContours(edged1.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+		
+			cnts1 = imutils.grab_contours(cnts1)
+			cnts1 = sorted(cnts1, key = cv2.contourArea, reverse = True)[:5]
+			
+			for c1 in cnts1:
+				peri1 = cv2.arcLength(c1, True) # chu vi			
+				approx1 = cv2.approxPolyDP(c1, 0.02 * peri1, True)
+				print(">>> approx1: " + str(len(approx1)))
+
+				cv2.drawContours(image, [approx1], 0, (0,255,0), 2)
+				cv2.imshow("image: ",  image)
+				cv2.waitKey(0)
+
+				point = len(approx1)
+
+				if len(approx1) == point :
+					screenCnt = approx1
+					# break
+				break
 			break
 	
 	# show the contour (outline) of the piece of paper
+	print(">>> screenCnt: " + str(screenCnt))
 	print("STEP 2: Find contours of paper")
 	cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
 	# cv2.imshow("Outline", image)
@@ -87,7 +108,7 @@ def scan(image):
 
 	# apply the four point transform to obtain a top-down
 	# view of the original image
-	warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
+	warped = four_point_transform(orig, screenCnt.reshape(point, 2) * ratio)
 
 	# convert the warped image to grayscale, then threshold it
 	# to give it that 'black and white' paper effect
@@ -165,8 +186,8 @@ def four_point_transform(image, pts):
 
 	# return the warped image
 	return warped
-# scan()
 
+# ############################# Xoay ảnh (nhưng cái này không dùng) #####################
 def textSkewCorrection(pathImg):
 	image = cv2.imread(pathImg)
 	image = cv2.resize(image,(500, 550))
@@ -215,4 +236,50 @@ def textSkewCorrection(pathImg):
 	cv2.imshow("Rotated", rotated)
 	cv2.waitKey(0)
 
-# textSkewCorrection('/home/dell/Documents/TEO/ai-python/text_recognition/images/slide-10.jpg')
+
+# ############################# Tự động vẽ hình theo viền slide (ngũ giác, lục giác,... nói chung tự do theo mét viề) #######################
+def drawROI(im):
+	gaus = cv2.GaussianBlur(im, (5, 5), 1)
+	# mask1 = cv2.dilate(gaus, np.ones((15, 15), np.uint8, 3))
+	mask2 = cv2.erode(gaus, np.ones((5, 5), np.uint8, 1))
+	imgray = cv2.cvtColor(mask2, cv2.COLOR_BGR2GRAY)
+	ret, thresh = cv2.threshold(imgray, 127, 255, 0)
+	contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+	maxArea1=0
+	maxI1=0
+
+	for i in range(len(contours)):
+		area = cv2.contourArea(contours[i])
+		epsilon = 0.01 * cv2.arcLength(contours[i], True)
+		approx = cv2.approxPolyDP(contours[i], epsilon, True)
+		if area > maxArea1 :
+			maxArea1 = area
+
+	print(maxArea1)
+	print(maxI1)
+	print("[drawROI] approx: " + str(len(approx)))
+	cv2.drawContours(im, contours, maxI1, (0,255,255), 3)
+
+	cv2.imshow("yay",im)
+	# cv2.imshow("gray",imgray)
+	cv2.waitKey(0)
+
+	# cv2.destroyAllWindows()
+	return im
+
+################################# Tự động vẽ viền theo hình chữ nhật ##############
+def drawROIRectangle(image):
+	# Select ROI
+	r = cv2.selectROI(image)
+	# Crop image
+	# im_crop = image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
+	
+	fourpoint = [
+		[[int(r[0]) , int(r[1]+r[3])]],
+		[[int(r[0]+r[2]) ,int(r[1]+r[3])]],
+		[[int(r[0]+r[2]) , int(r[1])]],
+		[[int(r[0]) , int(r[1])]],
+	]
+	screenCnt = np.array(fourpoint, np.int32)
+	return screenCnt

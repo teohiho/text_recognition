@@ -56,7 +56,7 @@ def simple(img):
         img_crop_simple = img[Y : Y + H, X : X + W]
 
         #--- draw those bounding boxes in the actual image as well as the plain blank image ---
-        # cv2.rectangle(img, (X, Y), (X + W, Y + H), (0,0,255), 2)
+        cv2.rectangle(img, (X, Y), (X + W, Y + H), (0,0,255), 2)
         # cv2.rectangle(black, (X, Y), (X + W, Y + H), (0,255,0), 2)
 
         # filename = './images/croped/A-savedSimpleImg-' + str((X+W+Y+H)) + '.png'
@@ -67,7 +67,7 @@ def simple(img):
         
         cv2.waitKey(0)
 
-    # cv2.imshow('contour', img)
+    cv2.imshow('contour', img)
     # cv2.imshow('black', black)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
