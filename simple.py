@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 from text_recognition import image_color_to_gray_size
+
 from imutils import contours
 
 
@@ -44,6 +45,8 @@ def simple(img):
     print("Sắp xếp")
     Contours = contours.sort_contours(Contours, method="left-to-right")[0]
     # cv2.drawContours(img, Contours, -1, (0,255,0), 3)
+
+    textRecognition = img.copy()
     for contour in Contours:
 
         #--- select contours above a certain area ---
@@ -56,7 +59,8 @@ def simple(img):
         img_crop_simple = img[Y : Y + H, X : X + W]
 
         #--- draw those bounding boxes in the actual image as well as the plain blank image ---
-        cv2.rectangle(img, (X, Y), (X + W, Y + H), (0,0,255), 2)
+        
+        cv2.rectangle(textRecognition, (X, Y), (X + W, Y + H), (0,0,255), 2)
         # cv2.rectangle(black, (X, Y), (X + W, Y + H), (0,255,0), 2)
 
         # filename = './images/croped/A-savedSimpleImg-' + str((X+W+Y+H)) + '.png'
@@ -67,7 +71,9 @@ def simple(img):
         
         cv2.waitKey(0)
 
-    cv2.imshow('contour', img)
+    
+
+    cv2.imshow('contour', textRecognition)
     # cv2.imshow('black', black)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

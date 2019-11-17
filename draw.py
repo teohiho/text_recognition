@@ -6,6 +6,7 @@ import imutils
 import math  
 from matplotlib import pyplot as plt
 from simple import simple
+from text_recognition import signalToTheEndOfAWord
 
 # #################################### DRAW AND CUTTING WORDS ################################# 
 def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), width=1):
@@ -86,8 +87,9 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         # filename1 = './images/croped/croped-' + str(polygon[0][1]) + str(polygon[1][1])  + '.jpg' 
         # cv2.imwrite(filename1, img_crop)
     
-        cv2.imshow("rotated", rotated)
+        cv2.imshow("img_crop", img_crop)
         simple(img_crop)
+        signalToTheEndOfAWord('end')
 
 
         # print("do: "+ str(-do))
@@ -162,6 +164,9 @@ def cropImage(rotated, pts, y0, y1):
     # cv2.drawContours(rotated, [box], 0, (0, 0, 255), 2)
     # img_crop, img_rot = crop_rect(drawOn, rect)
     center, size, angle = rect[0], rect[1], rect[2]
+    print("center: "  + str(center))
+    print("size: "  + str(size))
+    print("angle: "  + str(angle))
     center, size = tuple(map(int, center)), tuple(map(int, size))
     # cv2.imwrite("cropped_img.jpg", img_crop)
     if(y0 < y1):
@@ -220,3 +225,4 @@ def drawBoxes(drawOn, boxes, ratioWidth, ratioHeight, color=(0, 255, 0), width=1
 #     img = image_smoothening(img)
 #     or_image = cv2.bitwise_or(img, closing)
 #     return or_image
+

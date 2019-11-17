@@ -246,6 +246,7 @@ def image_color_to_gray_size(imageSimple):
 
 
     cv2.waitKey(0)
+    
 
 def binarize_image(imageSimple, threshold):
     """Binarize an image."""
@@ -280,6 +281,12 @@ def writeListToTextFile(list, filePath, mode='a'):
         for item in list:
             # myfile.write(str(item) +  '\n')
             myfile.write(str(item) )
+
+
+
+def signalToTheEndOfAWord(signal):
+    if(signal == 'end'):
+        writeListToTextFile(' ', 'result.txt', 'a')
 
 
 
