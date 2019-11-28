@@ -1,8 +1,10 @@
 *.egg-info
 .idea/
 __pycache__/
-images/output/
+images/croped/
 ve/
 frozen_east_text_detection.pb
 handwrite_model
 handwrite_model_TuTrain
+AlphabetModel_FromHienDataset
+

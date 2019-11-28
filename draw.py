@@ -7,23 +7,20 @@ import math
 from matplotlib import pyplot as plt
 from simple import simple
 from text_recognition import signalToTheEndOfAWord
+from scanFixed import scanFromPoint
 
 # #################################### DRAW AND CUTTING WORDS ################################# 
 def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), width=1):
     # # print("polygons: " + str(len(polygons))) #các khung nhận dạng được trong 1 hình
-    np_array=[]
-    # cv2.imshow("drawOn", drawOn)
+
     for polygon in polygons:
         pts = np.array(polygon, np.int32)
         pts = pts.reshape((-1, 1, 2))
 
         #### draw the polygon
         # img = cv2.polylines(drawOn, [pts], True, color, width)
+        
         ####
-        # cv2.imshow("img", img)
-        # config = ("-l eng --oem 1 --psm 7")
-        # text = pytesseract.image_to_string(pts, config=config)
-
         # print("pts: "+ str([pts][1]))   https://www.aiworkbox.com/lessons/convert-numpy-array-to-mxnet-ndarray
         # print("pts: "+ str([pts(1)]))
 
@@ -33,6 +30,15 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         #     (lowerRightX, lowerRightY),
         #     (upperLeftX, lowerRightY)
         # ]
+
+        # ===========================
+        # # Cắt ảnh từ khung nghiêng
+        # # print("polygon[3][1]: "+ str(polygon[3][1])) #246.98870153288397
+        # # print("polygon[1][1]: "+ str(polygon[1][1])) #195.3879830750784
+        # # print("polygon[3][0]: "+ str(polygon[3][0])) #222.65554937590102
+        # # print("polygon[1][0]: "+ str(polygon[1][0])) #360.8632403870683
+        # rect_img1 = drawOn[int(polygon[1][1]) : int(polygon[3][1]), int(polygon[3][0]) : int(polygon[1][0])]
+        # cv2.imshow('rect_img1', rect_img1)
 
         # ===========================
         # Given 4 points, how to crop a quadrilateral from an image in pytorch/torchvision?
@@ -46,43 +52,13 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         # polygon[3][1] = polygon[3][1] + 10
         # pts = np.array([[polygon[0][0] - 5, polygon[0][1] - 5], [polygon[1][0] + 5, polygon[1][1] - 5], [polygon[2][0] + 5, polygon[2][1] + 5], [polygon[3][0] - 5, polygon[3][1] + 5]], dtype=np.int32)
         pts = np.array([[polygon[0][0] , polygon[0][1] ], [polygon[1][0] , polygon[1][1]], [polygon[2][0] , polygon[2][1]], [polygon[3][0] , polygon[3][1]]], dtype=np.int32)
-        mask = np.zeros((drawOn.shape[0], drawOn.shape[1]))
-        cv2.fillConvexPoly(mask, pts, 1)
-        mask = mask.astype(np.bool)
-        out = np.zeros_like(drawOn)
-        out[mask] = drawOn[mask]
-        # print("out.shape[:2] : " + str(out.shape[:2])) 
-        ### 
-        # cv2.imshow('out', out)
-
-        # ===========================
-        # # Cắt ảnh từ khung nghiêng
-        # # print("polygon[3][1]: "+ str(polygon[3][1])) #246.98870153288397
-        # # print("polygon[1][1]: "+ str(polygon[1][1])) #195.3879830750784
-        # # print("polygon[3][0]: "+ str(polygon[3][0])) #222.65554937590102
-        # # print("polygon[1][0]: "+ str(polygon[1][0])) #360.8632403870683
-        # rect_img1 = drawOn[int(polygon[1][1]) : int(polygon[3][1]), int(polygon[3][0]) : int(polygon[1][0])]
-        # cv2.imshow('rect_img1', rect_img1)
-
-        # ===========================
         # # Text xoay hình
-        # cv2.imshow('drawOn', drawOn)
-        # rotated = imutils.rotate_bound(drawOn, 20)
-        # cv2.imshow("Rotated (Correct)", rotated)
-        #print("polygon[0][1]: "+ str(polygon[0][1])) #195.3879830750784
-        
-        # rotated = imutils.rotate_bound(out, -20)
-        # cv2.imshow("Rotated (Correct)", rotated)
-        l = polygon[1][1] - polygon[0][1]
-        h = polygon[1][0] - polygon[0][0]
-        a = l/h
-        do = math.degrees(math.atan(a)) # arctan rồi chuyển radian sang độ
-        
-        # rotated = imutils.rotate_bound(out, -do)
-        rotated = imutils.rotate(out, do)
-        
+        # img_crop = cropImage(drawOn, polygon, pts)
 
-        img_crop = cropImage(rotated, pts, polygon[0][1], polygon[1][1])
+
+        img_crop = scanFromPoint(pts, drawOn, 100)
+        
+        
 
         # filename1 = './images/croped/croped-' + str(polygon[0][1]) + str(polygon[1][1])  + '.jpg' 
         # cv2.imwrite(filename1, img_crop)
@@ -91,11 +67,6 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         simple(img_crop)
         signalToTheEndOfAWord('end')
 
-
-        # print("do: "+ str(-do))
-        # print("l: "+ str(l))
-        # print("h: "+ str(h))
-        # print("a: "+ str(a))
         # print("polygon[0][1] * (662/600): "+ str(polygon[0][1] ))
         # print("polygon[2][1] * (662/600): "+ str(polygon[2][1] ))
         # print("polygon[0][0] * (468/340): "+ str(polygon[0][0] ))
@@ -141,39 +112,27 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         # config = ("-l eng --oem 3 --psm 12")
         # text = pytesseract.image_to_string(img_crop, config=config)
         # print("text: " + str(text))
-        
-        # np_im = np.array(img_crop)
-        # np_im = np_im - 18
-        # new_im = Image.fromarray(np_im)
-        # # new_im.save("numpy_altered_sample2" + str(polygon[1][1] - polygon[0][1]) +".png")
-        # np_array.append(new_im)
+
         cv2.waitKey(0)
-        # print("np_array: " + str([np_array]))
-
-        
-    # return np_array
         
 
-# #################################### CROP IMAGE ################################# 
-def cropImage(rotated, pts, y0, y1):
-    cX, cY = findCenterOfBlob(rotated)
-    rect = cv2.minAreaRect(pts)
-    # print("rect: {}".format(rect))
-    box = cv2.boxPoints(rect)
-    box = np.int0(box)
-    # cv2.drawContours(rotated, [box], 0, (0, 0, 255), 2)
-    # img_crop, img_rot = crop_rect(drawOn, rect)
-    center, size, angle = rect[0], rect[1], rect[2]
-    print("center: "  + str(center))
-    print("size: "  + str(size))
-    print("angle: "  + str(angle))
-    center, size = tuple(map(int, center)), tuple(map(int, size))
-    # cv2.imwrite("cropped_img.jpg", img_crop)
-    if(y0 < y1):
-        img_crop = cv2.getRectSubPix(rotated, (size[1], size[0]), (cX, cY))
-    else:
-        img_crop = cv2.getRectSubPix(rotated, size, (cX, cY))
-    return img_crop
+
+
+
+
+# #################################### DRAW BOXES ################################# 
+# Dùng cho khung thẳng, nhưng ở đây đã chỉnh khung nghiêng theo chữ nên không cần
+def drawBoxes(drawOn, boxes, ratioWidth, ratioHeight, color=(0, 255, 0), width=1):
+
+    for(x,y,w,h) in boxes:
+        startX = int(x*ratioWidth)
+        startY = int(y*ratioHeight)
+        endX = int((x+w)*ratioWidth)
+        endY = int((y+h)*ratioHeight)
+
+        # draw the bounding box on the image
+        cv2.rectangle(drawOn, (startX, startY), (endX, endY), color, width)
+
 
 
 # #################################### FIND THE CENTER OF THE FIGURE ################################# 
@@ -195,27 +154,43 @@ def findCenterOfBlob(img):
     # put text and highlight the center
     # cv2.circle(img, (cX, cY), 5, (0, 0, 255), -1)
     # cv2.putText(img, "centroid", (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-    
-    # display the image
-    # cv2.imshow("Image", img)
     return cX, cY
 
+# #################################### CROP IMAGE ################################# 
+def cropImage(drawOn, polygon, pts):
+     
+    mask = np.zeros((drawOn.shape[0], drawOn.shape[1]))
+    cv2.fillConvexPoly(mask, pts, 1)
+    mask = mask.astype(np.bool)
+    out = np.zeros_like(drawOn)
+    out[mask] = drawOn[mask]
 
-# #################################### DRAW BOXES ################################# 
-# Dùng cho khung thẳng, nhưng ở đây đã chỉnh khung nghiêng theo chữ nên không cần
-def drawBoxes(drawOn, boxes, ratioWidth, ratioHeight, color=(0, 255, 0), width=1):
+    l = polygon[1][1] - polygon[0][1]
+    h = polygon[1][0] - polygon[0][0]
+    a = l/h
+    do = math.degrees(math.atan(a)) # arctan rồi chuyển radian sang độ
+    rotated = imutils.rotate(out, do) # imutils.rotate_bound
 
-    for(x,y,w,h) in boxes:
-        startX = int(x*ratioWidth)
-        startY = int(y*ratioHeight)
-        endX = int((x+w)*ratioWidth)
-        endY = int((y+h)*ratioHeight)
 
-        # draw the bounding box on the image
-        cv2.rectangle(drawOn, (startX, startY), (endX, endY), color, width)
-        # cv2.imshow("title",drawOn)
-        # cv2.waitKey(0)
-
+    cX, cY = findCenterOfBlob(rotated)
+    rect = cv2.minAreaRect(pts)
+    # print("rect: {}".format(rect))
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
+    # cv2.drawContours(rotated, [box], 0, (0, 0, 255), 2)
+    # img_crop, img_rot = crop_rect(drawOn, rect)
+    center, size, angle = rect[0], rect[1], rect[2]
+    print("center: "  + str(center))
+    print("size: "  + str(size))
+    print("angle: "  + str(angle))
+    
+    center, size = tuple(map(int, center)), tuple(map(int, size))
+    # cv2.imwrite("cropped_img.jpg", img_crop)
+    if(polygon[0][1] <  polygon[1][1]):
+        img_crop = cv2.getRectSubPix(rotated, (size[1], size[0]), (cX, cY))
+    else:
+        img_crop = cv2.getRectSubPix(rotated, size, (cX, cY))
+    return img_crop
 
 # def remove_noise_and_smooth(img):
 #     filtered = cv2.adaptiveThreshold(img.astype(np.uint8), 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 41)
@@ -225,4 +200,3 @@ def drawBoxes(drawOn, boxes, ratioWidth, ratioHeight, color=(0, 255, 0), width=1
 #     img = image_smoothening(img)
 #     or_image = cv2.bitwise_or(img, closing)
 #     return or_image
-

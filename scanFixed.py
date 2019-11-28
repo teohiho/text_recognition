@@ -105,10 +105,14 @@ def scan(image):
 	# cv2.imshow("Outline", image)
 	# cv2.waitKey(0)
 	# cv2.destroyAllWindows()
-
+	scanImage = scanFromPoint(screenCnt.reshape(point, 2) * ratio, orig, 650)
+	cv2.waitKey(0)
+	return scanImage
+	
+def scanFromPoint(pts, image, height):
 	# apply the four point transform to obtain a top-down
 	# view of the original image
-	warped = four_point_transform(orig, screenCnt.reshape(point, 2) * ratio)
+	warped = four_point_transform(image, pts)
 
 	# convert the warped image to grayscale, then threshold it
 	# to give it that 'black and white' paper effect
@@ -119,13 +123,11 @@ def scan(image):
 
 	# show the original and scanned images
 	print("STEP 3: Apply perspective transform")
-	# cv2.imshow("Original", imutils.resize(orig, height = 650))
-	cv2.imshow("Scanned", imutils.resize(warped, height = 650))
-	# cv2.imshow("warped", warped)
-	cv2.waitKey(0)
+	# cv2.imshow("Original", imutils.resize(image, height = 650))
+	cv2.imshow("Scanned", imutils.resize(warped, height = height))
 	
-	return imutils.resize(warped, height = 650)
-	
+	return imutils.resize(warped, height = height)
+
 def order_points(pts):
 	# initialzie a list of coordinates that will be ordered
 	# such that the first entry in the list is the top-left,
@@ -268,7 +270,7 @@ def drawROI(im):
 	# cv2.destroyAllWindows()
 	return im
 
-################################# Tự động vẽ viền theo hình chữ nhật ##############
+################################# Mình phải vẽ viền theo hình chữ nhật ##############
 def drawROIRectangle(image):
 	# Select ROI
 	r = cv2.selectROI(image)

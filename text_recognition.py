@@ -7,7 +7,7 @@ import pickle
 from skimage import io  # pip install scikit-image
 # ====
 import cv2
-from PIL import Image
+from PIL import ImageEnhance, Image
 
 # TRAIN_ITEMS = 112799
 # TEST_ITEMS = 18799
@@ -119,7 +119,7 @@ def train_model():
 
     # test
     print("Bắt đầu test!")
-    pickle.dump(classifier, open("handwrite_model_TuTrain", 'wb'))
+    pickle.dump(classifier, open("AlphabetModel_FromHienDataset", 'wb'))
 
     #cho ra các label của test gọp lại thành mảng
     predictions = classifier.predict(test_data[0])
@@ -206,7 +206,7 @@ def image_color_to_gray_size(imageSimple):
     img = cv2.resize(img,(28, 28))
     
     print(">>>numpy_array:" + str(img.shape[:2]))
-    # cv2.imshow("img resize" , img )
+    # cv2.imshow("imgResize" , img )
     # cv2.waitKey(0)
     img = np.expand_dims(img, axis=0)
     img = np.expand_dims(img, axis=3)
@@ -215,7 +215,7 @@ def image_color_to_gray_size(imageSimple):
     # print("<<<<<logo:" + str(logo))
     if type(img) is str:
         logo = io.imread(img, as_grey=True)
-    classifier = pickle.load(open("handwrite_model_TuTrain", 'rb'))
+    classifier = pickle.load(open("AlphabetModel_FromHienDataset", 'rb'))
     
 
     # logo = logo.reshape((logo.shape[0]*3, 28, 28))
@@ -234,27 +234,24 @@ def image_color_to_gray_size(imageSimple):
     # print("logo_train_chia:", logo_train_chia)
     show_image(logo)
     result = classifier.predict(logo_train_chia)
+
     print("The predicted letter is :")
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "rf", "rt"]
     
     print(alphabet[result[0]- 1])
 
-
-    #!/usr/bin/python
     # Open a file
     writeListToTextFile(alphabet[result[0]- 1],'result.txt', 'a')
-
 
     cv2.waitKey(0)
     
 
 def binarize_image(imageSimple, threshold):
     """Binarize an image."""
-    # image_file = Image.open(imageSimple)
     image_file = Image.fromarray(imageSimple)
+    image_file = ImageEnhance.Contrast(image_file).enhance(3.5)
     image = image_file.convert('L')  # convert image to monochrome
     image = np.array(image)
-    # print("#### image:" + str(image))
     image = binarize_array(image, threshold)
     return image
 
@@ -268,7 +265,6 @@ def binarize_array(numpy_array, threshold=200):
             else:
                 numpy_array[i][j]  = 255
     # img = cv2.resize(numpy_array,(28, 28))
-    # print(">>>numpy_array:" + str(img.shape[:2]))
     return numpy_array
 
 
