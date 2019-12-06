@@ -2,6 +2,7 @@ import numpy as np
 import timeit
 
 from sklearn import svm
+from sklearn.neural_network import MLPClassifier
 import struct       #modun dung de dinh dạng ban ghi nhi phan , giai nen du lieu #https://www.geeksforgeeks.org/struct-module-python/
 import pickle
 from skimage import io  # pip install scikit-image
@@ -89,13 +90,14 @@ def loadMnistData():
     return mnist_data
 
 ######################################## Train data ##########################################
-def train_model():
+def train_model_SVM():
+    print("Bắt đầu train!")
     start_time = timeit.default_timer()
-    print("start_time: ", start_time) #19293.887149361
+    print("+ Start_time: ", start_time)
 
     training_data, test_data = loadMnistData()
-    print("training_data: ", training_data)
-    print("test_data: ", test_data)
+    # print("training_data: ", training_data)
+    # print("test_data: ", test_data)
 
     # ######### Rotate 90 độ #############
     # for i in range(len(training_data[0]-1)):
@@ -114,19 +116,69 @@ def train_model():
     # cho nó học từ images và label của data train
     classifier.fit(training_data[0], training_data[1])         
     train_time = timeit.default_timer()
-    print("train_time: ", train_time)       #19672.935809503
-    print('gemfield train cost {}'.format(str(train_time - start_time) ) )
+    print("+ Train_time: ", train_time)      
+    print('+ Gemfield train cost {}'.format(str(train_time - start_time) ) )
+
+    pickle.dump(classifier, open("AlphabetModel_FromHienDataset_SVM", 'wb'))
 
     # test
     print("Bắt đầu test!")
-    pickle.dump(classifier, open("AlphabetModel_FromHienDataset", 'wb'))
+    set_score("AlphabetModel_FromHienDataset_SVM")
+    set_predictions("AlphabetModel_FromHienDataset_SVM")
+
+    test_time = timeit.default_timer()
+    print('+ Gemfield test cost {}'.format(str(test_time - train_time) ) )          #gemfield test cost 206.6903916629999
+
+
+######################################## Train data Nertron Network ##########################################
+def train_model_NN():
+    print("Bắt đầu train!")
+    start_time = timeit.default_timer()
+    print("+ Start_time: ", start_time)
+
+    training_data, test_data = loadMnistData()
+    mlp = MLPClassifier(hidden_layer_sizes=(100, ), 
+                    max_iter=480, alpha=1e-4,
+                    solver='sgd', verbose=10, 
+                    tol=1e-4, random_state=1,
+                    learning_rate_init=.1)
+
+    mlp.fit(training_data[0], training_data[1])
+
+    train_time = timeit.default_timer()
+    print("+ Train_time: ", train_time)
+    print('+ Gemfield train cost {}'.format(str(train_time - start_time) ) )
+
+    pickle.dump(mlp, open("AlphabetModel_FromHienDataset_NN", 'wb'))
+
+    # test
+    print("Bắt đầu test!")
+    set_score("AlphabetModel_FromHienDataset_NN")
+    set_predictions("AlphabetModel_FromHienDataset_NN")
+
+    test_time = timeit.default_timer()
+    print('+ Gemfield test cost {}'.format(str(test_time - train_time) ) )
+
+
+##################################### Xem thử % độ chính xác của Model vừa train ##############################
+def set_score(nameModel):
+    classifier = pickle.load(open(nameModel, 'rb'))
+    training_data, test_data = loadMnistData()
+
+    print("Training set score: %f" % classifier.score(training_data[0], training_data[1]))
+    print("Test set score: %f" % classifier.score(test_data[0], test_data[1]))
+
+def set_predictions(nameModel):
+    classifier = pickle.load(open(nameModel, 'rb'))
+    training_data, test_data = loadMnistData()
 
     #cho ra các label của test gọp lại thành mảng
     predictions = classifier.predict(test_data[0])
     predictions = []
     for a in classifier.predict(test_data[0]):
         predictions.append(a)
-    print("PREDICT %r" % predictions)
+
+    # print("PREDICT %r" % predictions)
 
     # so sánh cái mảng các label vừa được dự đoán được với mảng label mà ban đầu đã cho để xem có đúng thay hông??
     i = 0
@@ -136,17 +188,6 @@ def train_model():
     num_correct = i
     # print("predictions", predictions)  # [7,2,1,..]
     print("%s trong %s gía trị đúng." % (num_correct, len(test_data[1])))      
-
-    test_time = timeit.default_timer()
-    print('gemfield test cost {}'.format(str(test_time - train_time) ) )          #gemfield test cost 206.6903916629999
-
-
-##################################### Pham tram test dat dua vao train data ##############################
-def test_model():
-    classifier = pickle.load(open("handwrite_model", 'rb'))
-    training_data, test_data = loadMnistData()
-    result = classifier.score(test_data[0], test_data[1])
-    print(result)
 
 
 ##################################### Test image ##############################
@@ -199,13 +240,15 @@ def image_predict_image(img):
     return result[0]
 
 ##################################### Convert Image Color to Gray resize #####################################
-def image_color_to_gray_size(imageSimple):
+
+
+def image_color_to_gray_size(imageSimple, signal):
     # cv2.imshow("filename",filename )
     img = binarize_image(imageSimple, 200)
     
     img = cv2.resize(img,(28, 28))
     
-    print(">>>numpy_array:" + str(img.shape[:2]))
+    # print(">>>numpy_array:" + str(img.shape[:2]))
     # cv2.imshow("imgResize" , img )
     # cv2.waitKey(0)
     img = np.expand_dims(img, axis=0)
@@ -215,7 +258,8 @@ def image_color_to_gray_size(imageSimple):
     # print("<<<<<logo:" + str(logo))
     if type(img) is str:
         logo = io.imread(img, as_grey=True)
-    classifier = pickle.load(open("AlphabetModel_FromHienDataset", 'rb'))
+    print("Load Model")
+    classifier = pickle.load(open("AlphabetModel_FromHienDataset_NN", 'rb'))
     
 
     # logo = logo.reshape((logo.shape[0]*3, 28, 28))
@@ -233,17 +277,25 @@ def image_color_to_gray_size(imageSimple):
         logo_train_chia[0][i] = logo_train[0][i] / 256
     # print("logo_train_chia:", logo_train_chia)
     show_image(logo)
-    result = classifier.predict(logo_train_chia)
+ 
+    result = classifier.predict(logo_train_chia)[0]
 
     print("The predicted letter is :")
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "rf", "rt"]
+   
     
-    print(alphabet[result[0]- 1])
+    # print(alphabet[result[0]- 1])
 
-    # Open a file
-    writeListToTextFile(alphabet[result[0]- 1],'result.txt', 'a')
-
-    cv2.waitKey(0)
+    # Xử lý chữ i
+    if(signal == 'yes'):
+        print("i")
+        writeListToTextFile("i",'result.txt', 'a')
+    elif(signal == 'double'):
+        print("")
+        writeListToTextFile("",'result.txt', 'a')
+    else:
+        alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "rf", "rt"]
+        print(alphabet[result- 1])
+        writeListToTextFile(alphabet[result- 1],'result.txt', 'a')
     
 
 def binarize_image(imageSimple, threshold):
@@ -301,9 +353,9 @@ def signalToTheEndOfAWord(signal):
 
 ####-----------------------
 #-------- De train du lieu----------------------
-# train_model()
-#-------- 
-# test_model()
+# train_model_SVM()
+# train_model_NN()
+
 #-------- Doc du lieu tu bo du lieu MNist--------
 # training_data, test_data = loadMnistData()
 

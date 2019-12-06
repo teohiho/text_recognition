@@ -10,6 +10,8 @@ import tesserocr as tr
 from PIL import Image
 from scanFixed import scan
 from text_detection import text_detection
+from word import word
+
 
 
 # #################################### PAGE SEGMENTATION ################################# 
@@ -63,6 +65,8 @@ from text_detection import text_detection
 def pageSegmentation(image):
     imgSegmentation = cv2.imread(image)
     imgScan = scan(imgSegmentation)
+    # filename1 = './images/croped/scanImage-' + '.jpg' 
+    # cv2.imwrite(filename1, scanImage)
     return imgScan
 
 
@@ -85,8 +89,8 @@ def text_recognition_command():
     # Đáng lẽ là phải Scan rồi cắt từng đoạn như mà Cắt đoạn ra rồi cắt từ thì bị lỗi
     imgSegmentation = pageSegmentation(image=args["image"])
     # Crop Word
-    text_detection(imgSegmentation, east=args["east"], min_confidence=args['min_confidence'], width=args["width"], height=args["height"], )   ## text_detection(image=args["image"], east=args["east"], min_confidence=args['min_confidence'], width=args["width"], height=args["height"], )
-    
+    # text_detection(imgSegmentation, east=args["east"], min_confidence=args['min_confidence'], width=args["width"], height=args["height"], )   ## text_detection(image=args["image"], east=args["east"], min_confidence=args['min_confidence'], width=args["width"], height=args["height"], )
+    word(imgSegmentation)
     cv2.waitKey(0)
 
 if __name__ == '__main__':

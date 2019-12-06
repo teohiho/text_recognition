@@ -7,4 +7,6 @@ frozen_east_text_detection.pb
 handwrite_model
 handwrite_model_TuTrain
 AlphabetModel_FromHienDataset
+AlphabetModel_FromHienDataset_NN
+AlphabetModel_FromHienDataset_SVM
 

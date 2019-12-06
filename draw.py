@@ -113,7 +113,7 @@ def drawPolygons(drawOn, polygons, ratioWidth, ratioHeight, color=(0, 0, 255), w
         # text = pytesseract.image_to_string(img_crop, config=config)
         # print("text: " + str(text))
 
-        cv2.waitKey(0)
+        # cv2.waitKey(0)
         
 
 

@@ -29,10 +29,10 @@ def rects2polys(rects, thetas, origins, ratioWidth=1, ratioHeight=1):
         lowerRightY = box[1] + box[3]
 
         # scale the bounding box coordinates based on the respective ratios
-        upperLeftX = int(upperLeftX * ratioWidth)
-        upperLeftY = int(upperLeftY * ratioHeight)
-        lowerRightX = int(lowerRightX * ratioWidth)
-        lowerRightY = int(lowerRightY * ratioHeight)
+        upperLeftX = int(upperLeftX * ratioWidth + 5 )
+        upperLeftY = int(upperLeftY * ratioHeight + 5 )
+        lowerRightX = int(lowerRightX * ratioWidth + 5 )
+        lowerRightY = int(lowerRightY * ratioHeight + 5 )
 
         # create an array of the rectangle's verticies
         points = [

@@ -10,9 +10,14 @@ import numpy as np
 import argparse
 import cv2
 import imutils
+from PIL import ImageEnhance, Image
 
 
 def scan(image):
+	image_file = Image.fromarray(image)
+	image_file = ImageEnhance.Contrast(image_file).enhance(3.5)
+	# image = image_file.convert('L')  # convert image to monochrome
+	image = np.array(image)
 	point = 4
 	# construct the argument parser and parse the arguments
 
@@ -63,39 +68,72 @@ def scan(image):
 			screenCnt = approx
 			break
 		else:
-			imDraw = drawROI(orig)
-			image = imDraw
-			orig = image.copy()
+			# imDraw = drawROI(orig)
+			# image = imDraw
+			# orig = image.copy()
 			
-			ratio = image.shape[0] / 500.0
+			# ratio = image.shape[0] / 500.0
 			
-			image = imutils.resize(image, height = 500)
+			# image = imutils.resize(image, height = 500)
 			
-			gray = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-			gray = cv2.GaussianBlur(gray, (5, 5), 0)
+			# gray = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+			# gray = cv2.GaussianBlur(gray, (5, 5), 0)
 			
-			edged1 = cv2.Canny(gray, 75, 200)
+			# edged1 = cv2.Canny(gray, 75, 200)
 			
-			cnts1 = cv2.findContours(edged1.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+			# cnts1 = cv2.findContours(edged1.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 		
-			cnts1 = imutils.grab_contours(cnts1)
-			cnts1 = sorted(cnts1, key = cv2.contourArea, reverse = True)[:5]
+			# cnts1 = imutils.grab_contours(cnts1)
+			# cnts1 = sorted(cnts1, key = cv2.contourArea, reverse = True)[:5]
 			
-			for c1 in cnts1:
-				peri1 = cv2.arcLength(c1, True) # chu vi			
-				approx1 = cv2.approxPolyDP(c1, 0.02 * peri1, True)
-				print(">>> approx1: " + str(len(approx1)))
+			# for c1 in cnts1:
+			# 	peri1 = cv2.arcLength(c1, True) # chu vi			
+			# 	approx1 = cv2.approxPolyDP(c1, 0.02 * peri1, True)
+			# 	print(">>> approx1: " + str(len(approx1)))
 
-				cv2.drawContours(image, [approx1], 0, (0,255,0), 2)
-				cv2.imshow("image: ",  image)
-				cv2.waitKey(0)
+			# 	cv2.drawContours(image, [approx1], 0, (0,255,0), 2)
+			# 	cv2.imshow("image: ",  image)
+			# 	cv2.waitKey(0)
 
-				point = len(approx1)
+			# 	point = len(approx1)
 
-				if len(approx1) == point :
-					screenCnt = approx1
-					# break
-				break
+			# 	if len(approx1) == point :
+			# 		screenCnt = approx1
+			# 		# break
+			# 	break
+			# break
+
+			# ######### DRAW ROI BY 4 POINTS #####
+
+			orig2 = image.copy()
+			fourpoint = []
+			# mouse callback function
+			
+			def draw_circle(event,x,y,flags,param):
+				
+				if event == cv2.EVENT_LBUTTONDBLCLK:
+					cv2.circle(orig2,(x,y),7,(255,0,0),-1)
+					
+					cv2.putText(orig2, "(" + str(x) + "," +str(y) + ")", (int(x + 0.1),int(y + 0.1)) , cv2.FONT_HERSHEY_SIMPLEX ,  0.7, (255, 0, 0) , 2, cv2.LINE_AA) 
+				
+					print("(x , y) = " + "(" + str(x) + " , "  + str(y) + ")")
+					
+					fourpoint.append([[x,y]])
+					
+			cv2.namedWindow('DRAW')
+			cv2.setMouseCallback('DRAW',draw_circle)
+			
+
+			while(1):
+				cv2.imshow('DRAW',orig2)
+	
+			
+				if cv2.waitKey(20) & 0xFF == 27:
+					break
+				# cv2.waitKey(0)
+			cv2.destroyAllWindows()
+
+			screenCnt = np.array(fourpoint, np.int32)
 			break
 	
 	# show the contour (outline) of the piece of paper
@@ -106,6 +144,7 @@ def scan(image):
 	# cv2.waitKey(0)
 	# cv2.destroyAllWindows()
 	scanImage = scanFromPoint(screenCnt.reshape(point, 2) * ratio, orig, 650)
+
 	cv2.waitKey(0)
 	return scanImage
 	

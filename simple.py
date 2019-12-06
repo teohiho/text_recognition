@@ -15,7 +15,6 @@ def simple(img):
     (origHeight, origWidth) = img.shape[:2]
 
     img = cv2.resize(img, (origWidth * 3, origHeight * 3))
-    # cv2.imshow('Image', img)
     #--- create a blank image of the same size for storing the green rectangles (boundaries) ---
     black = np.zeros_like(img)
 
@@ -27,7 +26,6 @@ def simple(img):
     
     ret2, th2 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
     
-    # cv2.imshow('th2', th2)
 
     #--- perform morphological operation to ensure smaller portions are part of a single character ---
     # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html
@@ -46,34 +44,72 @@ def simple(img):
     Contours = contours.sort_contours(Contours, method="left-to-right")[0]
     # cv2.drawContours(img, Contours, -1, (0,255,0), 3)
 
+
+    mask = np.zeros(th2.shape, dtype=np.uint8)
+
+
     textRecognition = img.copy()
-    for contour in Contours:
+
+    textI = 0
+    countCharacter = 0
+    for idx in range(len(Contours)):
+        [X, Y, W, H] = cv2.boundingRect(Contours[idx])
+        mask[Y:Y+H, X:X+W] = 0
+        cv2.drawContours(mask, Contours, idx, (255, 255, 255), -1)
+        r = float(cv2.countNonZero(mask[Y:Y+H, X:X+W])) / (W * H)
+
+        if r > 0.45 and W > 9 and H > 9:
+            countCharacter = countCharacter + 1
+            if(idx > 0):
+                if(cv2.boundingRect(Contours[idx])[0] == cv2.boundingRect(Contours[idx-1])[0]):
+                    textI = countCharacter - 1
+                    print(">>>>>> textI: "+ str(textI))
+    abc = 0
+    for idx in range(len(Contours)):
 
         #--- select contours above a certain area ---
         # if cv2.contourArea(contour) > 100:
 
         #--- store the coordinates of the bounding boxes ---
-        [X, Y, W, H] = cv2.boundingRect(contour)
+        [X, Y, W, H] = cv2.boundingRect(Contours[idx])
 
-        #--- cut 
-        img_crop_simple = img[Y : Y + H, X : X + W]
 
-        #--- draw those bounding boxes in the actual image as well as the plain blank image ---
-        
-        # cv2.rectangle(textRecognition, (X, Y), (X + W, Y + H), (0,0,255), 2)
-        # cv2.rectangle(black, (X, Y), (X + W, Y + H), (0,255,0), 2)
+        mask[Y:Y+H, X:X+W] = 0
+        cv2.drawContours(mask, Contours, idx, (255, 255, 255), -1)
+        r = float(cv2.countNonZero(mask[Y:Y+H, X:X+W])) / (W * H)
 
-        # filename = './images/croped/A-savedSimpleImg-' + str((X+W+Y+H)) + '.png'
-        # cv2.imwrite(filename, img_crop_simple)
-        cv2.imshow('img_crop_simple', img_crop_simple)
-        
-        image_color_to_gray_size(img_crop_simple)
-        
-        cv2.waitKey(0)
+        if r > 0.45 and W > 9 and H > 9:
+            abc = abc + 1
+            #--- cut 
+            img_crop_simple = img[Y : Y + H, X : X + W]
 
-    
+            #--- draw those bounding boxes in the actual image as well as the plain blank image ---
+            
+            # cv2.rectangle(textRecognition, (X, Y), (X + W, Y + H), (0,0,255), 2)
+            # cv2.rectangle(black, (X, Y), (X + W, Y + H), (0,255,0), 2)
+
+            cv2.imshow('img_crop_simple', img_crop_simple)
+            
+            
+            print("abc: " + str(abc)+ "| " + "textI: " + str(textI))
+            
+            if(abc == textI):
+                image_color_to_gray_size(img_crop_simple, 'yes')
+            elif(abc == textI + 1):
+                image_color_to_gray_size(img_crop_simple, 'double')
+            else:
+                image_color_to_gray_size(img_crop_simple, 'no')
+
+            
+            cv2.waitKey(0)
+    textI = 0
+    abc = 0
 
     # cv2.imshow('contour', textRecognition)
     # cv2.imshow('black', black)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+# img = cv2.imread('./images/imgWordCroped-612.png') 
+# # savedSimpleImg-573.png
+# simple(img)
