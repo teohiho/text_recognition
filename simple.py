@@ -1,16 +1,14 @@
 # https://stackoverflow.com/questions/50431647/how-to-detect-symbols-on-a-image-and-save-it
 # https://stackoverflow.com/questions/44601734/cv2-findcontours-not-able-to-detect-contours
+
 import cv2
 import numpy as np
 from text_recognition import image_color_to_gray_size
-
 from imutils import contours
-
 
 
 def simple(img):
     # img = cv2.imread('./images/croped-75.8153573485758274.19087879578598.jpg') 
-
 
     (origHeight, origWidth) = img.shape[:2]
 
@@ -50,7 +48,7 @@ def simple(img):
 
     textRecognition = img.copy()
 
-    textI = 0
+    checkPositionOfI = 0
     countCharacter = 0
     for idx in range(len(Contours)):
         [X, Y, W, H] = cv2.boundingRect(Contours[idx])
@@ -62,9 +60,9 @@ def simple(img):
             countCharacter = countCharacter + 1
             if(idx > 0):
                 if(cv2.boundingRect(Contours[idx])[0] == cv2.boundingRect(Contours[idx-1])[0]):
-                    textI = countCharacter - 1
-                    print(">>>>>> textI: "+ str(textI))
-    abc = 0
+                    checkPositionOfI = countCharacter - 1
+   
+    countCharacter = 0
     for idx in range(len(Contours)):
 
         #--- select contours above a certain area ---
@@ -79,7 +77,7 @@ def simple(img):
         r = float(cv2.countNonZero(mask[Y:Y+H, X:X+W])) / (W * H)
 
         if r > 0.45 and W > 9 and H > 9:
-            abc = abc + 1
+            countCharacter = countCharacter + 1
             #--- cut 
             img_crop_simple = img[Y : Y + H, X : X + W]
 
@@ -89,27 +87,22 @@ def simple(img):
             # cv2.rectangle(black, (X, Y), (X + W, Y + H), (0,255,0), 2)
 
             cv2.imshow('img_crop_simple', img_crop_simple)
-            
-            
-            print("abc: " + str(abc)+ "| " + "textI: " + str(textI))
-            
-            if(abc == textI):
-                image_color_to_gray_size(img_crop_simple, 'yes')
-            elif(abc == textI + 1):
-                image_color_to_gray_size(img_crop_simple, 'double')
+
+            if  (checkPositionOfI != 0):
+                if(countCharacter == checkPositionOfI):
+                    image_color_to_gray_size(img_crop_simple, 'yes')      
+                elif(countCharacter == checkPositionOfI + 1):
+                    image_color_to_gray_size(img_crop_simple, 'double')
+                else:
+                    image_color_to_gray_size(img_crop_simple, 'no')
             else:
                 image_color_to_gray_size(img_crop_simple, 'no')
 
             
-            cv2.waitKey(0)
-    textI = 0
-    abc = 0
+            # cv2.waitKey(0)
 
     # cv2.imshow('contour', textRecognition)
     # cv2.imshow('black', black)
     cv2.waitKey(0)
+    
     cv2.destroyAllWindows()
-
-# img = cv2.imread('./images/imgWordCroped-612.png') 
-# # savedSimpleImg-573.png
-# simple(img)

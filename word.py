@@ -47,17 +47,13 @@ def word(img):
             # Nhận biết đã kết thúc một từ để chèn dấu cách vào
             signalToTheEndOfAWord('end')
             
-            cv2.waitKey(0)
-            
-
-    # cv2.imshow('rects', rgb)
+            # cv2.waitKey(0)
+        if cv2.waitKey(20) & 0xFF == 27:
+            cv2.destroyAllWindows()
+            break
     cv2.waitKey(0)
 
 def get_contour_precedence(contour, cols):
     tolerance_factor = 30
     origin = cv2.boundingRect(contour)
     return ((origin[1] // tolerance_factor) * tolerance_factor) * cols + origin[0]
-
-
-# word(cv2.imread('./images/warped.jpg') )
-

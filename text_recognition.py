@@ -1,12 +1,10 @@
 import numpy as np
 import timeit
-
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 import struct       #modun dung de dinh dạng ban ghi nhi phan , giai nen du lieu #https://www.geeksforgeeks.org/struct-module-python/
 import pickle
 from skimage import io  # pip install scikit-image
-# ====
 import cv2
 from PIL import ImageEnhance, Image
 
@@ -247,55 +245,45 @@ def image_color_to_gray_size(imageSimple, signal):
     img = binarize_image(imageSimple, 200)
     
     img = cv2.resize(img,(28, 28))
-    
-    # print(">>>numpy_array:" + str(img.shape[:2]))
-    # cv2.imshow("imgResize" , img )
-    # cv2.waitKey(0)
+
     img = np.expand_dims(img, axis=0)
     img = np.expand_dims(img, axis=3)
     
     logo = img
-    # print("<<<<<logo:" + str(logo))
+
     if type(img) is str:
         logo = io.imread(img, as_grey=True)
     print("Load Model")
     classifier = pickle.load(open("AlphabetModel_FromHienDataset_NN", 'rb'))
     
-
     # logo = logo.reshape((logo.shape[0]*3, 28, 28))
     # logo = np.arange(2352).reshape(1,28, 28 )
-
-    
     
     logo_train = (logo).reshape(1, -1)
-    # print(">>>logo_train:" + str(logo_train.shape[:2]))
-    # print("logo_train:", logo_train)
+
     total_pixel = 28*28
     logo_train_chia = [[0 for _ in range(total_pixel)]]
     
     for i in range(total_pixel):
         logo_train_chia[0][i] = logo_train[0][i] / 256
-    # print("logo_train_chia:", logo_train_chia)
+
     show_image(logo)
  
     result = classifier.predict(logo_train_chia)[0]
 
     print("The predicted letter is :")
-   
-    
-    # print(alphabet[result[0]- 1])
 
     # Xử lý chữ i
-    if(signal == 'yes'):
+    if(signal == 'no'):
+        alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "rf", "rt"]
+        print(alphabet[result- 1])
+        writeListToTextFile(alphabet[result- 1],'result.txt', 'a')
+    elif(signal == 'yes'):
         print("i")
         writeListToTextFile("i",'result.txt', 'a')
     elif(signal == 'double'):
         print("")
         writeListToTextFile("",'result.txt', 'a')
-    else:
-        alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "rf", "rt"]
-        print(alphabet[result- 1])
-        writeListToTextFile(alphabet[result- 1],'result.txt', 'a')
     
 
 def binarize_image(imageSimple, threshold):
