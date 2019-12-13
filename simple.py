@@ -99,7 +99,7 @@ def simple(img):
                 image_color_to_gray_size(img_crop_simple, 'no')
 
             
-            # cv2.waitKey(0)
+            cv2.waitKey(0)
 
     # cv2.imshow('contour', textRecognition)
     # cv2.imshow('black', black)

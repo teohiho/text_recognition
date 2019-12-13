@@ -40,7 +40,7 @@ def word(img):
             # cv2.rectangle(rgb, (x, y), (x+w-1, y+h-1), (0, 255, 0), 2)
             imgWordCroped = rgb[y:y+h, x:x+w]
 
-            cv2.imshow('imgWordCroped', imgWordCroped)
+            # cv2.imshow('imgWordCroped', imgWordCroped)
 
             # Crop characrer 
             simple(imgWordCroped)

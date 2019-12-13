@@ -61,6 +61,50 @@ from word import word
 #     finally:
 #         api.End()
 
+# #################################################################
+
+# def pageSegmentation(image):
+#     large = cv2.imread(image)
+#     large = scan(large)
+
+#     # large = cv2.imread("./images/warpedabcxyz.jpg")
+#     rgb = cv2.pyrDown(large)
+#     small = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
+
+#     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+#     kernel = np.ones((5, 5), np.uint8)
+#     grad = cv2.morphologyEx(small, cv2.MORPH_GRADIENT, kernel)
+
+#     _, bw = cv2.threshold(grad, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+#     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
+#     connected = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel)
+
+#     # using RETR_EXTERNAL instead of RETR_CCOMP
+#     contours, hierarchy = cv2.findContours(connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+#     #For opencv 3+ comment the previous line and uncomment the following line
+#     #_, contours, hierarchy = cv2.findContours(connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+#     mask = np.zeros(bw.shape, dtype=np.uint8)
+
+#     for idx in range(len(contours)):
+#         x, y, w, h = cv2.boundingRect(contours[idx])
+#         mask[y:y+h, x:x+w] = 0
+#         cv2.drawContours(mask, contours, idx, (255, 255, 255), -1)
+#         r = float(cv2.countNonZero(mask[y:y+h, x:x+w])) / (w * h)
+
+#         if r > 0.45 and w > 8 and h > 8:
+#             # cv2.rectangle(cv_img, (x-25,y-25), (x+w+25,y+h+25), color=(0,0,255))
+#             # cv2.rectangle(rgb, (x, y), (x+w-1, y+h-1), (0, 255, 0), 2)
+#             imgSegmentation = rgb[y : y + h , x : x + w]
+#             cv2.imshow('imgSegmentation', imgSegmentation)
+#             cv2.waitKey(0)
+#             return imgSegmentation
+
+
+#     cv2.imshow('rects', rgb)
+#     cv2.waitKey(0)
+
 # #################################### SCAN ################################# 
 def pageSegmentation(image):
     imgSegmentation = cv2.imread(image)
