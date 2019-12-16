@@ -28,8 +28,8 @@ def simple(img):
     #--- perform morphological operation to ensure smaller portions are part of a single character ---
     # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html
     # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    threshed = cv2.morphologyEx(th2, cv2.MORPH_CLOSE, kernel)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 8))
+    threshed = cv2.morphologyEx(th2, cv2.MORPH_OPEN, kernel)
     threshed = cv2.dilate(th2, kernel, iterations=2)
 
     #--- find contours ---
@@ -83,10 +83,11 @@ def simple(img):
 
             #--- draw those bounding boxes in the actual image as well as the plain blank image ---
             
-            # cv2.rectangle(textRecognition, (X, Y), (X + W, Y + H), (0,0,255), 2)
+            cv2.rectangle(textRecognition, (X, Y), (X + W, Y + H), (0,0,255), 2)
+            
             # cv2.rectangle(black, (X, Y), (X + W, Y + H), (0,255,0), 2)
 
-            cv2.imshow('img_crop_simple', img_crop_simple)
+            # cv2.imshow('img_crop_simple', img_crop_simple)
 
             if  (checkPositionOfI != 0):
                 if(countCharacter == checkPositionOfI):
@@ -101,7 +102,10 @@ def simple(img):
             
             cv2.waitKey(0)
 
-    # cv2.imshow('contour', textRecognition)
+
+    cv2.imshow('contour', textRecognition)
+    # filename1 = './images/croped/wordetect-'  + '.jpg' 
+    # cv2.imwrite(filename1, textRecognition)
     # cv2.imshow('black', black)
     cv2.waitKey(0)
     

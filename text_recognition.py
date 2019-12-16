@@ -267,22 +267,22 @@ def image_color_to_gray_size(imageSimple, signal):
     for i in range(total_pixel):
         logo_train_chia[0][i] = logo_train[0][i] / 256
 
-    show_image(logo)
+    # show_image(logo)
  
     result = classifier.predict(logo_train_chia)[0]
 
-    print("The predicted letter is :")
+    # print("The predicted letter is :")
 
     # Xử lý chữ i
     if(signal == 'no'):
         alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "rf", "rt"]
-        print(alphabet[result- 1])
+        # print(alphabet[result- 1])
         writeListToTextFile(alphabet[result- 1],'result.txt', 'a')
     elif(signal == 'yes'):
-        print("i")
+        # print("i")
         writeListToTextFile("i",'result.txt', 'a')
     elif(signal == 'double'):
-        print("")
+        # print("")
         writeListToTextFile("",'result.txt', 'a')
     
 

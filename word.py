@@ -11,12 +11,12 @@ def word(img):
     rgb = large
     small = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
     grad = cv2.morphologyEx(small, cv2.MORPH_GRADIENT, kernel)
 
     _, bw = cv2.threshold(grad, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (6, 6)) #(9, 1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5)) #(9, 1)
     connected = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel)
     # using RETR_EXTERNAL instead of RETR_CCOMP
     Contours, hierarchy = cv2.findContours(connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -51,7 +51,7 @@ def word(img):
         if cv2.waitKey(20) & 0xFF == 27:
             cv2.destroyAllWindows()
             break
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
 
 def get_contour_precedence(contour, cols):
     tolerance_factor = 30
